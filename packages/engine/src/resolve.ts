@@ -77,6 +77,8 @@ export interface Resolved {
   gammaMv: number;
   gammaG: number;
   gammaQ: number;
+  /** Sources of γG and γQ as used (table value or user override). */
+  factorSources: Source[];
   psi0: number;
   elementClass: ElementClass;
   actions: ResolvedAction[];
@@ -456,6 +458,10 @@ export function resolve(input: GlassInput): { errors: ValidationError[]; r?: Res
       gammaMv: f.gammaMv ?? GAMMA_MV[basis].value,
       gammaG: f.gammaG ?? GAMMA_G[basis].value,
       gammaQ,
+      factorSources: [
+        f.gammaG !== undefined ? src("EN16612", "Table 2 (user value)", 16) : GAMMA_G[basis].source,
+        f.gammaQ !== undefined ? src("EN16612", "Table 2 (user value)", 16) : basis === "uk" ? GAMMA_Q_UK[elementClass].source : GAMMA_Q_EN.source,
+      ],
       psi0: f.psi0Climate ?? PSI0_CAVITY.value,
       elementClass,
       actions,

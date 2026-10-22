@@ -545,7 +545,7 @@ function analyseUncached(input: GlassInput): Analysis {
             fgd[gov]!.text,
             `σmax/fg;d = ${fmt(demand)}/${fmt(capacity)} = ${fmt(u, 3)}`,
           ],
-          sources: [EQ.combos, EQ.stressCheck, EQ.kmodRule, ...terms.map((x) => x.resp.action.kmodSource), ...fgd[gov]!.sources, ...thickSources, ...shareSources, ...methodSources],
+          sources: [EQ.combos, ...r.factorSources, EQ.stressCheck, EQ.kmodRule, ...terms.map((x) => x.resp.action.kmodSource), ...fgd[gov]!.sources, ...thickSources, ...shareSources, ...methodSources],
         });
       } else {
         const pill = combo.kind === "pillowing";
