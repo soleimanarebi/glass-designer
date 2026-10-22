@@ -6,7 +6,7 @@ export const DOCUMENTS = {
   ISE: { title: "IStructE, Structural use of glass in buildings, 2nd edition, February 2014" },
   BS6180: { title: "BS 6180:2011 Barriers in and about buildings — Code of practice" },
   "BS6262-4": { title: "BS 6262-4:2018 Glazing for buildings — Part 4: Code of practice for safety related to human impact" },
-  REPORT: { title: "Example report: Brent Cross Plot 201, Glass structural calculation report (Glass & Façade Solutions)" },
+  REPORT: { title: "Example report: glass structural calculation report (project details withheld)" },
   SHEET: { title: "Glass to PR EN 16612 / IStructE Glass in Buildings 2014 spreadsheet, v4.0" },
   "MEPLA-DG": { title: "Mepla Software GmbH, MEPLA help: Double Glazing" },
   "MEPLA-VER": { title: "RWTH Aachen, Lehrstuhl für Stahlbau: verification calculations for SJ MEPLA" },

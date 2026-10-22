@@ -19,7 +19,7 @@ export const TEMPLATES: Template[] = [
     id: "igu-barrier",
     label: "IGU with barrier",
     name: "Insulating unit at ground floor acting as a barrier",
-    note: "Example values from the Brent Cross Plot 201 report: 66.2 HS / 16 / 8 FT, 1.79 kN/m² wind, BS 6180 category (xiii). Uniform load cases use Annex B large deflection, as the report used a nonlinear analysis. Enter the EN 12600 classes from the product data for the human impact check.",
+    note: "Example values from a project calculation report: 66.2 HS / 16 / 8 FT, 1.79 kN/m² wind, BS 6180 category (xiii). Uniform load cases use Annex B large deflection, as the report used a nonlinear analysis. Enter the EN 12600 classes from the product data for the human impact check.",
     input: {
       basis: "uk",
       geometry: { arrangement: "four-edge", width: 1736, height: 2691 },

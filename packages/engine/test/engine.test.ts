@@ -109,7 +109,7 @@ describe("strips", () => {
   });
 });
 
-const brent = (): GlassInput => ({
+const reportIgu = (): GlassInput => ({
   basis: "uk",
   geometry: { arrangement: "four-edge", width: 1736, height: 2691 },
   buildUp: {
@@ -122,15 +122,15 @@ const brent = (): GlassInput => ({
   options: { elementClass: "secondary" },
 });
 
-describe("insulating glass unit (example report: Brent Cross 1736 × 2691)", () => {
-  const r = runChecks(brent());
+describe("insulating glass unit (example report: 1736 × 2691)", () => {
+  const r = runChecks(reportIgu());
   if (!r.ok) throw new Error(JSON.stringify(r.errors));
   it("partition for barrier loads: δ1 0.5381, a* 531, φ 0.0087", () => {
     const il = r.derived.partition.find((p) => p.action === "IL")!;
     expect(il.delta1).toBeCloseTo(0.5381, 4);
     expect(il.aStar).toBeCloseTo(531, 0);
     expect(il.phi).toBeCloseTo(0.0087, 4);
-    // Brent reads k5 0.0384 from the table; the closed form gives 0.0387 (Table B.3 interpolates to 0.0388).
+    // The report reads k5 0.0384 from the table; the closed form gives 0.0387 (Table B.3 interpolates to 0.0388).
     expect(il.k5).toBeCloseTo(0.0387, 4);
   });
   it("isochore pressures p0 = 16.00 kPa summer, −16.10 kPa winter", () => {
@@ -158,7 +158,7 @@ describe("insulating glass unit (example report: Brent Cross 1736 × 2691)", () 
 
 describe("validation", () => {
   it("rejects bad geometry and IGUs that are not four-edge supported", () => {
-    const i = brent();
+    const i = reportIgu();
     i.geometry = { arrangement: "cantilever", width: -1, height: 1100 };
     const r = runChecks(i);
     expect(r.ok).toBe(false);
@@ -167,7 +167,7 @@ describe("validation", () => {
     }
   });
   it("rejects a glass type with no tabulated strength", () => {
-    const i = brent();
+    const i = reportIgu();
     i.buildUp = { kind: "single", pane: { plies: [{ thickness: 10, glass: { ...FT, composition: "polished-wired" } }] } };
     const r = runChecks(i);
     expect(r.ok).toBe(false);
@@ -190,5 +190,29 @@ describe("cantilever balustrade", () => {
   });
   it("point loads on a strip are reported as not covered", () => {
     expect(r.notCovered.map((n) => n.id)).toContain("PL");
+  });
+});
+
+describe("separate wind pressure and suction", () => {
+  const input = (loads: GlassInput["loads"]): GlassInput => ({
+    basis: "uk",
+    geometry: { arrangement: "four-edge", width: 1200, height: 1500 },
+    buildUp: { kind: "single", pane: { plies: [{ thickness: 10, glass: FT }] } },
+    loads,
+  });
+  const cases = (loads: GlassInput["loads"]) => {
+    const r = runChecks(input(loads));
+    if (!r.ok) throw new Error(JSON.stringify(r.errors));
+    return Object.fromEntries(r.loadCases.map((c) => [c.id, c.value]));
+  };
+  it("checks suction at its own value when given", () => {
+    expect(cases({ wind: 0.8, windSuction: 1.33 })).toMatchObject({ "W+": 0.8, "W-": -1.33 });
+  });
+  it("defaults suction to the pressure value", () => {
+    expect(cases({ wind: 1.2 })).toMatchObject({ "W+": 1.2, "W-": -1.2 });
+  });
+  it("adds the minimum load only when both are below 0.4 kN/m²", () => {
+    expect(cases({ wind: 0.3, windSuction: 0.5 })).not.toHaveProperty("MIN");
+    expect(cases({ wind: 0.3, windSuction: 0.2 })).toHaveProperty("MIN");
   });
 });

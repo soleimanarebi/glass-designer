@@ -5,10 +5,12 @@ import { Inputs } from "../src/components/Inputs";
 import { Verification } from "../src/components/Verification";
 import { layers } from "../src/components/Viewer";
 import { TEMPLATES } from "../src/templates";
+import { WIND_EXAMPLE, windLoadFor } from "../src/wind";
 import { comboOptions, ENVELOPE, modeColour, nearest, paneViews, utilisationColour } from "../src/viz";
 
 afterEach(cleanup);
 const byId = (id: string) => TEMPLATES.find((t) => t.id === id)!;
+const noWind = { setup: null, outcome: null, toggle: () => {}, set: () => {} };
 
 describe("templates", () => {
   it("all run without input errors and say where their values come from", () => {
@@ -48,7 +50,7 @@ describe("Inputs", () => {
   it("shows picture cards for templates and supports and reports edits", () => {
     const edits: string[] = [];
     const input = structuredClone(byId("window").input);
-    render(<Inputs input={input} templateId="window" onTemplate={() => {}} update={(fn) => { const d = structuredClone(input); fn(d); edits.push(d.geometry.arrangement); }} />);
+    render(<Inputs input={input} templateId="window" onTemplate={() => {}} wind={noWind} update={(fn) => { const d = structuredClone(input); fn(d); edits.push(d.geometry.arrangement); }} />);
     const supports = screen.getByRole("group", { name: "Supports" });
     const cards = supports.querySelectorAll("button");
     expect(cards).toHaveLength(4);
@@ -56,6 +58,47 @@ describe("Inputs", () => {
     fireEvent.click(cards[3]!);
     expect(edits).toEqual(["cantilever"]);
     expect(screen.getByRole("group", { name: "Templates" }).querySelectorAll("button")).toHaveLength(TEMPLATES.length);
+  });
+});
+
+describe("wind calculator", () => {
+  const load = (over: Partial<typeof WIND_EXAMPLE>) => {
+    const o = windLoadFor({ ...structuredClone(WIND_EXAMPLE), ...over });
+    if (!o.ok) throw new Error(o.errors.join("; "));
+    return o.load;
+  };
+  it("gives the pane its elevation's pressure and corner or general suction", () => {
+    const corner = load({ face: "E", position: "corner" });
+    const general = load({ face: "E", position: "general" });
+    expect(corner.governingPressure.zone).toBe("D");
+    expect(corner.governingSuction.zone).toBe("A");
+    expect(corner.suctionNet).toBeGreaterThan(general.suctionNet);
+    expect(corner.pressureNet).toBeCloseTo(general.pressureNet, 12);
+  });
+  it("applies the CWCT 0.8 kN/m² minimum and rounds up to 0.01", () => {
+    const l = load({ face: "N", position: "general" });
+    expect(l.pressureNet).toBeLessThan(0.8);
+    expect(l.pressure).toBe(0.8);
+    const net = load({ face: "N", position: "general", cwct: false });
+    expect(net.pressure).toBeGreaterThanOrEqual(net.pressureNet);
+    expect(net.pressure - net.pressureNet).toBeLessThan(0.01);
+  });
+  it("reports wind engine errors", () => {
+    const s = structuredClone(WIND_EXAMPLE);
+    s.input.building.height = -1;
+    expect(windLoadFor(s).ok).toBe(false);
+  });
+  it("shows the calculator and its result in the inputs", () => {
+    const setup = structuredClone(WIND_EXAMPLE);
+    const outcome = windLoadFor(setup);
+    const input = structuredClone(byId("window").input);
+    const toggles: boolean[] = [];
+    render(<Inputs input={input} templateId="window" onTemplate={() => {}} update={() => {}} wind={{ setup, outcome, toggle: (on) => toggles.push(on), set: () => {} }} />);
+    expect(screen.getByText(/Pressure \d+\.\d\d kN\/m²/)).toBeTruthy();
+    expect(screen.getByText(/Suction \d+\.\d\d kN\/m²/)).toBeTruthy();
+    expect(screen.queryByText("Wind pressure, characteristic")).toBeNull();
+    fireEvent.change(screen.getByLabelText("Wind load"), { target: { value: "enter" } });
+    expect(toggles).toEqual([false]);
   });
 });
 

@@ -5,7 +5,8 @@ A web tool for checking glass panes (monolithic, laminated, double glazed units)
 barriers against BS EN 16612:2019 with the UK nationally determined parameters of the
 IStructE *Structural use of glass in buildings* (2nd ed., 2014), barrier loads from
 BS 6180:2011 and human impact guidance from BS 6262-4:2018, plus a marketing site.
-The report output is modelled on the example report `docs/reference/Brent Cross-201.docx`.
+The report output is modelled on an example glass calculation report kept locally in
+`docs/reference/` (not committed).
 
 ## Layout (pnpm workspace, Node 22)
 - `packages/engine` — pure TypeScript calculation engine. No UI, no I/O.
@@ -15,6 +16,8 @@ The report output is modelled on the example report `docs/reference/Brent Cross-
     formulae, beam strips and cantilevers.
   - `src/resolve.ts` validates inputs and resolves defaults; `src/checks.ts` builds the load
     cases, combinations and checks; `src/index.ts` exports `runChecks()` and `paneField()`.
+- `packages/wind` — the shared wind engine (`@wind/engine`), copied unchanged from
+  `soleimanarebi/wind-loader`. Do not edit it here; see its README to re-sync.
 - `apps/app` — Vite + React + react-three-fiber checker (inputs left, 3D glass centre,
   verification right, PDF report).
 - `apps/site` — static multi-page landing site (Netlify Forms contact form).

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { DISCLAIMER } from "../src/disclaimer";
 import { buildReport, inputRows, paneText, pdfText } from "../src/report";
 import { TEMPLATES } from "../src/templates";
+import { WIND_EXAMPLE, windLoadFor } from "../src/wind";
 
 describe("PDF report", () => {
   it("builds for every template, with the cover, sections and appendix", () => {
@@ -22,6 +23,18 @@ describe("PDF report", () => {
   });
   it("spells out symbols the PDF fonts cannot show", () => {
     expect(pdfText("σ ≤ fg;d, γM;A, φ, ω → √")).toBe("sigma <= fg;d, gamma_M;A, phi, omega -> sqrt");
+  });
+  it("adds the wind calculation when the calculator set the wind load", () => {
+    const o = windLoadFor(WIND_EXAMPLE);
+    if (!o.ok) throw new Error();
+    const t = TEMPLATES.find((x) => x.id === "window")!;
+    const input = structuredClone(t.input);
+    input.loads.wind = o.load.pressure;
+    input.loads.windSuction = o.load.suction;
+    const doc = buildReport(input, runChecks(input), { disclaimer: DISCLAIMER, wind: { setup: WIND_EXAMPLE, load: o.load }, compress: false });
+    const text = doc.output();
+    for (const s of ["3.1 Wind actions", "Peak velocity pressure", "Net pressures on the South elevation", "Appendix B", "UK National Annex"]) expect(text).toContain(s);
+    expect(inputRows(input).find((r) => r[0] === "Wind")![1]).toContain(`${o.load.suction} kN/m2 suction`);
   });
   it("refuses invalid inputs", () => {
     const i = structuredClone(TEMPLATES[0]!.input);

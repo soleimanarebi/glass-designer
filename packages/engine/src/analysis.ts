@@ -25,7 +25,7 @@ import {
 import { src, type Source } from "./data/sources";
 import { equivalentThickness } from "./laminate";
 import { annexB, fourEdge, makeGrid, principal, strip, type BeamLoad, type Grid, type UnitField } from "./plate";
-import { designStrength, omegaFor, resolve, selfWeight, type LoadGeom, type Resolved, type ResolvedAction } from "./resolve";
+import { designStrength, omegaFor, resolve, selfWeight, windSuction, type LoadGeom, type Resolved, type ResolvedAction } from "./resolve";
 import type {
   ActionId,
   Advisory,
@@ -738,7 +738,7 @@ function buildAdvisories(
       source: EQ.barrierDuration,
     });
   }
-  if (input.loads.wind < MIN_UDL.value) {
+  if (Math.max(input.loads.wind, windSuction(input.loads)) < MIN_UDL.value) {
     out.push({ id: "A-MIN", message: "The wind load is below 0.4 kN/m², so the minimum short-duration uniform load is checked as well.", source: MIN_UDL.source });
   }
   if (laminated) {
