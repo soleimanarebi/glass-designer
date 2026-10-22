@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.netlify/
+*.log
+.DS_Store
+coverage/
+
+# Licensed reference documents stay local (see docs/reference/README.md)
+docs/reference/*
+!docs/reference/README.md

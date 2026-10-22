@@ -1,0 +1,107 @@
+{
+  "name": "Insulating glass unit (example report, Brent Cross Plot 201)",
+  "description": "1736 × 2691 mm IGU, outer 6 + 0.76 + 6 heat-strengthened with PVB, 16 mm cavity, inner 8 mm toughened; wind 1.79 kN/m², BS 6180 category (xiii) barrier loads at normal duty, secondary element (γQ 1.3). Compares the report's derived values.",
+  "reference": {
+    "source": "REPORT §2.5, §4.1–4.5 and Tables 9–12",
+    "printed": {
+      "heq;w ω=0.1 (mm)": 8.42,
+      "heq;σ ω=0.1 (mm)": 9.45,
+      "δ1": 0.5381,
+      "k5": 0.0384,
+      "a* (mm)": 531.96,
+      "φ": 0.0087,
+      "p0 summer (kPa)": 16.0,
+      "p0 winter (kPa)": -16.1,
+      "fg;d HS wind / barrier": "49 / 45.9",
+      "fg;d FT wind / barrier": "90.6 / 87.5",
+      "inner pane w SLS 01 (mm)": 21.58,
+      "outer pane σ ULS 05 (N/mm²)": 34.15
+    },
+    "gap": "Thickness, partition, isochore pressure and strengths match. k5 is read from Table B.3 in the report (0.0384) and from the closed form here (0.0387), which moves a* from 531.96 to 530.9. The report's stresses and deflections come from a geometrically nonlinear FE model (MEPLA) with its own load sharing, so the linear plate results here are higher for large deflections and are not compared; the report also uses ω = 0.1 for cavity pressure where IStructE has no row (OQ-03)."
+  },
+  "input": {
+    "basis": "uk",
+    "geometry": {
+      "arrangement": "four-edge",
+      "width": 1736.0,
+      "height": 2691.0
+    },
+    "buildUp": {
+      "kind": "igu",
+      "outer": {
+        "plies": [
+          {
+            "thickness": 6,
+            "glass": {
+              "type": "heat-strengthened",
+              "composition": "float",
+              "surface": "as-produced",
+              "process": "horizontal",
+              "edge": "polished"
+            }
+          },
+          {
+            "thickness": 6,
+            "glass": {
+              "type": "heat-strengthened",
+              "composition": "float",
+              "surface": "as-produced",
+              "process": "horizontal",
+              "edge": "polished"
+            }
+          }
+        ],
+        "interlayer": {
+          "material": "pvb",
+          "thickness": 0.76
+        }
+      },
+      "inner": {
+        "plies": [
+          {
+            "thickness": 8,
+            "glass": {
+              "type": "toughened",
+              "composition": "float",
+              "surface": "as-produced",
+              "process": "horizontal",
+              "edge": "polished"
+            }
+          }
+        ]
+      },
+      "cavity": 16
+    },
+    "loads": {
+      "wind": 1.79,
+      "barrier": {
+        "category": "xiii",
+        "sillHeight": 0,
+        "duration": "normal"
+      }
+    },
+    "options": {
+      "elementClass": "secondary"
+    }
+  },
+  "expected": {
+    "governing": null,
+    "checks": {},
+    "derived": {
+      "panes.0.thickness.2.heqW": 8.417948018273384,
+      "partition.2.delta1": 0.5381193026294291,
+      "partition.2.k5": 0.03870632562885488,
+      "partition.2.aStar": 530.9082631845316,
+      "partition.2.phi": 0.008671547894202552,
+      "climate.0.p0": 16.0,
+      "climate.1.p0": -16.1,
+      "panes.0.strength.0.fgd.0": 48.958333333333336,
+      "panes.1.strength.0.fgd.0": 90.625,
+      "panes.0.strength.1.fgd.0": 45.86458333333333,
+      "panes.1.strength.1.fgd.0": 87.53125
+    }
+  },
+  "tolerance": {
+    "relative": 1e-05
+  }
+}

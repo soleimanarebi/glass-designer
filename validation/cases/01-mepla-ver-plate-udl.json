@@ -1,0 +1,60 @@
+{
+  "name": "Four-edge plate under uniform load (MEPLA verification)",
+  "description": "Simply supported 1000 × 2500 × 6 mm toughened pane, 1.0 kN/m² wind. Navier series at the centre; infill γQ = 1.2.",
+  "reference": {
+    "source": "MEPLA-VER, plate example, theoretical values",
+    "printed": {
+      "w (mm)": 8.641,
+      "σxx (N/mm²)": 18.71,
+      "σyy (N/mm²)": 5.88
+    },
+    "gap": "None: the printed theoretical values are the same Navier series, matched to the printed digits."
+  },
+  "input": {
+    "basis": "uk",
+    "geometry": {
+      "arrangement": "four-edge",
+      "width": 1000.0,
+      "height": 2500.0
+    },
+    "buildUp": {
+      "kind": "single",
+      "pane": {
+        "plies": [
+          {
+            "thickness": 6.0,
+            "glass": {
+              "type": "toughened",
+              "composition": "float",
+              "surface": "as-produced",
+              "process": "horizontal",
+              "edge": "polished"
+            }
+          }
+        ]
+      }
+    },
+    "loads": {
+      "wind": 1.0
+    }
+  },
+  "expected": {
+    "pass": true,
+    "governing": null,
+    "checks": {
+      "P1 SLS 01": {
+        "demand": 8.641005579338415,
+        "capacity": 15.384615384615385,
+        "utilisation": 0.561665362656997
+      },
+      "P1 ULS 01": {
+        "demand": 22.44837876858002,
+        "capacity": 90.625,
+        "utilisation": 0.247706248480883
+      }
+    }
+  },
+  "tolerance": {
+    "relative": 0.0001
+  }
+}

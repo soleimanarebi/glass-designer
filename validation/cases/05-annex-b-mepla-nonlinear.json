@@ -1,0 +1,81 @@
+{
+  "name": "Large deflection by EN 16612 Annex B (MEPLA Non-Linearity page)",
+  "description": "Square 1500 mm four-edge pane, 4 + 1.52 + 4 laminate with no shear transfer, 2 kN/m², Annex B analysis.",
+  "reference": {
+    "source": "MEPLA-NL, Non-Linearity help page",
+    "printed": {
+      "w linear (mm)": 52,
+      "w nonlinear FE (mm)": 16.16
+    },
+    "gap": "Annex B gives 18.26 mm at p* = 14.01, between the linear and the FE nonlinear result: the closed form is a fit to simply supported plates with edges free to pull in and is conservative here."
+  },
+  "input": {
+    "basis": "uk",
+    "geometry": {
+      "arrangement": "four-edge",
+      "width": 1500.0,
+      "height": 1500.0
+    },
+    "buildUp": {
+      "kind": "single",
+      "pane": {
+        "plies": [
+          {
+            "thickness": 4,
+            "glass": {
+              "type": "toughened",
+              "composition": "float",
+              "surface": "as-produced",
+              "process": "horizontal",
+              "edge": "polished"
+            }
+          },
+          {
+            "thickness": 4,
+            "glass": {
+              "type": "toughened",
+              "composition": "float",
+              "surface": "as-produced",
+              "process": "horizontal",
+              "edge": "polished"
+            }
+          }
+        ],
+        "interlayer": {
+          "material": "pvb",
+          "thickness": 1.52
+        }
+      }
+    },
+    "loads": {
+      "wind": 2.0
+    },
+    "factors": {
+      "omega": {
+        "W+": 0,
+        "W-": 0
+      }
+    },
+    "options": {
+      "analysis": "annexB"
+    }
+  },
+  "expected": {
+    "governing": null,
+    "checks": {
+      "P1 SLS 01": {
+        "demand": 18.259184401564397,
+        "capacity": 23.076923076923077,
+        "utilisation": 0.7912313240677905
+      },
+      "P1 ULS 01": {
+        "demand": 23.27519527782273,
+        "capacity": 90.625,
+        "utilisation": 0.2568297409966646
+      }
+    }
+  },
+  "tolerance": {
+    "relative": 1e-05
+  }
+}

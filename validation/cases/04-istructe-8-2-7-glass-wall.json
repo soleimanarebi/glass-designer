@@ -1,0 +1,90 @@
+{
+  "name": "Glass wall spanning floor to ceiling (IStructE 8.2.7)",
+  "description": "Two-edge vertical span 2500 mm, 2000 mm wide, laminated 8 + 0.76 + 8 mm toughened, 0.6 kN/m², γQ 1.5, ω = 0.1 as in the example.",
+  "reference": {
+    "source": "ISE 8.2.7 worked example, p.59–60",
+    "printed": {
+      "hef;w (mm)": 11.2,
+      "hef;σ (mm)": 12.6,
+      "σ (N/mm²)": 26.5,
+      "δ (mm)": 37,
+      "limit (mm)": 38
+    },
+    "gap": "The example uses a mid-plane distance of 4.42 mm (exact (8 + 0.76)/2 = 4.38) and rounds M to 0.7 kNm/m, giving 26.5 N/mm² against the exact 26.89. ω = 0.1 is entered as an override because Table C.9 gives 0.3 for wind outside the Mediterranean; the engine raises an advisory."
+  },
+  "input": {
+    "basis": "uk",
+    "geometry": {
+      "arrangement": "two-edge",
+      "span": "vertical",
+      "width": 2000.0,
+      "height": 2500.0
+    },
+    "buildUp": {
+      "kind": "single",
+      "pane": {
+        "plies": [
+          {
+            "thickness": 8,
+            "glass": {
+              "type": "toughened",
+              "composition": "float",
+              "surface": "as-produced",
+              "process": "horizontal",
+              "edge": "polished"
+            }
+          },
+          {
+            "thickness": 8,
+            "glass": {
+              "type": "toughened",
+              "composition": "float",
+              "surface": "as-produced",
+              "process": "horizontal",
+              "edge": "polished"
+            }
+          }
+        ],
+        "interlayer": {
+          "material": "pvb",
+          "thickness": 0.76
+        }
+      }
+    },
+    "loads": {
+      "wind": 0.6
+    },
+    "factors": {
+      "omega": {
+        "W+": 0.1,
+        "W-": 0.1
+      }
+    },
+    "options": {
+      "elementClass": "primary"
+    }
+  },
+  "expected": {
+    "pass": true,
+    "governing": null,
+    "checks": {
+      "P1 SLS 01": {
+        "demand": 37.57403376958898,
+        "capacity": 38.46153846153846,
+        "utilisation": 0.9769248780093135
+      },
+      "P1 ULS 01": {
+        "demand": 26.894014458302617,
+        "capacity": 90.625,
+        "utilisation": 0.29676153885023576
+      }
+    },
+    "derived": {
+      "panes.0.thickness.0.heqW": 11.166450624270027,
+      "panes.0.thickness.0.heqS.0": 12.524606155526769
+    }
+  },
+  "tolerance": {
+    "relative": 1e-05
+  }
+}

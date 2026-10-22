@@ -1,0 +1,97 @@
+{
+  "name": "Cantilever glass balustrade (IStructE 7.8)",
+  "description": "Restaurant balustrade, laminated 12 + 1.52 + 12 mm toughened, clamped base, 0.74 kN/m at 1100 mm; 2 m panes for the post-failure check.",
+  "reference": {
+    "source": "ISE 7.8 worked example, p.46–47",
+    "printed": {
+      "fg;d (N/mm²)": 84.2,
+      "hef;w (mm)": 15,
+      "hef;σ (mm)": 17,
+      "δ (mm)": 17,
+      "σ post-failure (N/mm²)": 47.7
+    },
+    "gap": "The example rounds hef;w to 15 mm (exact 15.12) and M to 1.2 and 2.3 kNm/m; the exact working gives δ 16.29 mm and a post-failure stress of 48.56 N/mm². The example compares the required thickness rather than a stress for the ULS case."
+  },
+  "input": {
+    "basis": "uk",
+    "geometry": {
+      "arrangement": "cantilever",
+      "width": 2000.0,
+      "height": 1100.0
+    },
+    "buildUp": {
+      "kind": "single",
+      "pane": {
+        "plies": [
+          {
+            "thickness": 12,
+            "glass": {
+              "type": "toughened",
+              "composition": "float",
+              "surface": "as-produced",
+              "process": "horizontal",
+              "edge": "polished"
+            }
+          },
+          {
+            "thickness": 12,
+            "glass": {
+              "type": "toughened",
+              "composition": "float",
+              "surface": "as-produced",
+              "process": "horizontal",
+              "edge": "polished"
+            }
+          }
+        ],
+        "interlayer": {
+          "material": "pvb",
+          "thickness": 1.52
+        }
+      }
+    },
+    "loads": {
+      "wind": 0,
+      "barrier": {
+        "category": "v",
+        "line": 0.74,
+        "udl": 0,
+        "point": 0,
+        "sillHeight": 0
+      }
+    },
+    "options": {
+      "elementClass": "primary",
+      "postFailure": {
+        "paneLength": 2000.0
+      }
+    }
+  },
+  "expected": {
+    "governing": null,
+    "checks": {
+      "P1 SLS 01": {
+        "demand": 16.285383597883605,
+        "capacity": 25.0,
+        "utilisation": 0.6514153439153442
+      },
+      "P1 ULS 01": {
+        "demand": 25.4375,
+        "capacity": 84.15625,
+        "utilisation": 0.30226513182324544
+      },
+      "P1 PF": {
+        "demand": 48.56250000000001,
+        "capacity": 84.15625,
+        "utilisation": 0.5770516152989232
+      }
+    },
+    "derived": {
+      "panes.0.thickness.1.heqW": 15.119052598738476,
+      "panes.0.thickness.1.heqS.0": 16.97056274847714
+    }
+  },
+  "tolerance": {
+    "relative": 1e-05
+  }
+}

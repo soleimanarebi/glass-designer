@@ -1,0 +1,71 @@
+{
+  "name": "Four-edge plate under a patch load (MEPLA verification)",
+  "description": "Same pane with a 1.0 kN barrier point load on a 100 × 100 mm patch at (750, 1700); line and infill loads set to 0. The checks take the maxima over the checker's 41 × 41 sampling grid (plus lines through the load); the MEPLA values are at the plate centre and are checked by the engine unit tests.",
+  "reference": {
+    "source": "MEPLA-VER, plate example with a patch load, theoretical values at the centre",
+    "printed": {
+      "w centre (mm)": 4.88,
+      "σxx centre (N/mm²)": 9.93,
+      "σyy centre (N/mm²)": 0.99
+    },
+    "gap": "Hand values at the centre 4.881 mm, 9.93, 0.99 N/mm²: same to the printed digits."
+  },
+  "input": {
+    "basis": "uk",
+    "geometry": {
+      "arrangement": "four-edge",
+      "width": 1000.0,
+      "height": 2500.0
+    },
+    "buildUp": {
+      "kind": "single",
+      "pane": {
+        "plies": [
+          {
+            "thickness": 6.0,
+            "glass": {
+              "type": "toughened",
+              "composition": "float",
+              "surface": "as-produced",
+              "process": "horizontal",
+              "edge": "polished"
+            }
+          }
+        ]
+      }
+    },
+    "loads": {
+      "wind": 0,
+      "barrier": {
+        "category": "v",
+        "line": 0,
+        "udl": 0,
+        "point": 1.0,
+        "sillHeight": 900,
+        "patch": 100.0,
+        "pointPosition": {
+          "x": 750.0,
+          "y": 1700.0
+        }
+      }
+    }
+  },
+  "expected": {
+    "governing": null,
+    "checks": {
+      "P1 SLS 01": {
+        "demand": 8.435914825033823,
+        "capacity": 15.384615384615385,
+        "utilisation": 0.5483344636271985
+      },
+      "P1 ULS 01": {
+        "demand": 55.77801555613932,
+        "capacity": 84.15625,
+        "utilisation": 0.662791124321002
+      }
+    }
+  },
+  "tolerance": {
+    "relative": 0.001
+  }
+}
