@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Glass Designer</title>
+    <meta name="description" content="Glass Designer checks glass panes, laminates, insulating units and balustrades against BS EN 16612, IStructE guidance and BS 6180, in 3D, with every number traced to its source." />
+    <meta name="theme-color" content="#0e4f6e" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/src/site.css" />
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top" id="top">
+      <div class="wrap top-inner">
+        <a class="brand" href="/" aria-label="Glass Designer, home">
+          <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="6" fill="currentColor" /><path d="M10 24 L22 8" stroke="var(--paper)" stroke-width="3" stroke-linecap="round" /><path d="M16 24 L22 16" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" /></svg>
+          <span>Glass Designer</span>
+        </a>
+        <nav aria-label="Main">
+          <ul class="nav">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how">How it works</a></li>
+            <li><a href="#validation">Validation</a></li>
+            <li><a href="#roadmap">Roadmap</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+        <a class="btn btn-primary btn-small" href="%VITE_APP_URL%">Try the checker</a>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="wrap hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">Structural glass design · release 1</p>
+            <h1 id="hero-title">Check glass panes, units and balustrades with the working on show.</h1>
+            <p class="lead">
+              Enter the build-up, the supports and the loads. Glass Designer runs the BS EN 16612 and IStructE checks, draws every
+              ply and cavity in 3D coloured by stress, and tells you which clause and page each number came from.
+            </p>
+            <div class="cta-row">
+              <a class="btn btn-primary" href="%VITE_APP_URL%">Try the checker</a>
+              <a class="btn btn-ghost" href="#how">See how it works</a>
+            </div>
+            <p class="fine">Free in your browser. Nothing you enter leaves your device.</p>
+          </div>
+          <figure class="hero-stage">
+            <div class="scene" id="scene" role="img" aria-label="A double glazed unit in 3D: a laminated outer pane, a spacer and an inner pane, the outer face shaded by stress utilisation. Drag to rotate.">
+              <div class="panel3d" id="panel3d">
+                <div class="face front"></div>
+                <div class="face pane2"></div>
+                <div class="face back"></div>
+                <div class="face edge top"></div>
+                <div class="face edge bottom"></div>
+                <div class="face edge left"></div>
+                <div class="face edge right"></div>
+              </div>
+            </div>
+            <figcaption class="fine">Drag to rotate · colour is stress utilisation of the outer pane</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="strip" aria-label="At a glance">
+        <div class="wrap strip-inner">
+          <p>
+            Release 1 covers monolithic and laminated panes and double glazed units on four edges, panes spanning between two
+            supports, and cantilever balustrades, under wind, snow, self weight, BS 6180 barrier loads and climatic cavity pressure.
+          </p>
+          <dl class="figures">
+            <div><dt>Load cases</dt><dd>10</dd></div>
+            <div><dt>Reference documents read</dt><dd>9</dd></div>
+            <div><dt>Values guessed</dt><dd>0</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section id="glass" aria-labelledby="glass-title">
+        <div class="wrap split">
+          <div>
+            <h2 id="glass-title">About structural glass</h2>
+            <p>
+              Glass is brittle: it does not yield, so its strength depends on surface flaws, on how long a load acts, and on
+              whether the glass has been heat treated. Annealed glass, heat-strengthened glass and thermally toughened glass carry
+              very different stresses, and the same pane is weaker under a long-term load than under a wind gust.
+            </p>
+            <p>
+              Laminating plies with an interlayer adds safety after breakage, but the plies only partly act together, so the
+              stiffness depends on the interlayer and the load. In a sealed insulating unit the gas in the cavity shares load
+              between the panes and pushes on them as temperature and air pressure change.
+            </p>
+            <p class="source">Summarised from BS EN 16612:2019 clauses 6 to 9 and Annexes C and D, and the IStructE guide, chapters 3 and 5.</p>
+          </div>
+          <ul class="facts">
+            <li><strong>45</strong><span>N/mm², characteristic strength of annealed glass, IStructE Table C.1</span></li>
+            <li><strong>70 / 120</strong><span>N/mm², heat-strengthened / toughened float, EN 16612 Table 6</span></li>
+            <li><strong>1.0 / 0.29</strong><span>kmod for a wind gust / a 50 year load, IStructE Table C.5</span></li>
+            <li><strong>L/65</strong><span>deflection limit, or 50 mm, EN 16612 9.1.4; 25 mm for barriers, BS 6180</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="why" class="band" aria-labelledby="why-title">
+        <div class="wrap">
+          <h2 id="why-title">Why Glass Designer</h2>
+          <p class="section-lead">A glass check pulls factors from several standards at once: strength from one table, duration from another, interlayer behaviour from a third. The usual tools each miss something.</p>
+          <ul class="compare">
+            <li class="compare-card">
+              <h3>Spreadsheets</h3>
+              <p>Quick for one pane, but load sharing in units and laminate effective thickness get copied and re-copied.</p>
+            </li>
+            <li class="compare-card">
+              <h3>General FE software</h3>
+              <p>Rigorous plate analysis, but the partial factors, kmod and barrier loads are still yours to look up.</p>
+            </li>
+            <li class="compare-card">
+              <h3>Hand calculations</h3>
+              <p>Clear and checkable, but slow to repeat for every pane size, build-up and load combination.</p>
+            </li>
+            <li class="compare-card compare-ours">
+              <h3>Glass Designer</h3>
+              <p>The standards' factors built in, every value sourced, results as you type, and a report laid out for a checker.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="features" aria-labelledby="features-title">
+        <div class="wrap">
+          <h2 id="features-title">What it does</h2>
+          <ul class="cards">
+            <li class="card">
+              <h3>Stress and deflection</h3>
+              <p>Plate analysis on four edges, beam strips on two, cantilevers clamped at the base, with an optional large-deflection method for uniform loads.</p>
+            </li>
+            <li class="card">
+              <h3>Laminates and units</h3>
+              <p>Effective thickness for each load case from the interlayer, load sharing between the panes and the isochore cavity pressure for summer and winter.</p>
+            </li>
+            <li class="card">
+              <h3>Barriers</h3>
+              <p>BS 6180 line, infill and point loads at the right height, a 25 mm limit for barrier panes, the post-failure check and the handrail rule.</p>
+            </li>
+            <li class="card">
+              <h3>Every ply in 3D</h3>
+              <p>Plies, interlayers and the cavity drawn to scale or exaggerated, coloured by utilisation, stress or deflection for any combination.</p>
+            </li>
+            <li class="card">
+              <h3>Working you can audit</h3>
+              <p>Each check opens to its formula with your numbers in it, and the document, clause and page each value came from.</p>
+            </li>
+            <li class="card">
+              <h3>A report for the file</h3>
+              <p>A PDF with title block, design data, loads, combinations, results per pane and an appendix of working.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="software" class="band" aria-labelledby="software-title">
+        <div class="wrap">
+          <h2 id="software-title">The software</h2>
+          <p class="section-lead">Inputs on the left, the glass in the middle, the checks on the right. Results update as you type.</p>
+          <figure class="shot">
+            <div class="shot-bar" aria-hidden="true"><span></span><span></span><span></span><code>Glass Designer · glass checker</code></div>
+            <img src="/img/app-full.webp" width="1440" height="900" alt="Glass Designer showing a double glazed unit: inputs on the left, the 3D unit in the centre and the checks grouped by pane on the right." loading="lazy" />
+          </figure>
+        </div>
+      </section>
+
+      <section id="how" aria-labelledby="how-title">
+        <div class="wrap">
+          <h2 id="how-title">How it works</h2>
+          <ol class="steps">
+            <li>
+              <span class="step-n" aria-hidden="true">01</span>
+              <h3>Pick a template and edit it</h3>
+              <p>Start from an insulating unit, a balustrade, a glass wall, a window pane or a rooflight, then change the size, plies, glass and loads.</p>
+              <img src="/img/step-inputs.webp" width="320" height="781" alt="The inputs column with template cards and support cards." loading="lazy" />
+            </li>
+            <li>
+              <span class="step-n" aria-hidden="true">02</span>
+              <h3>Read the checks</h3>
+              <p>Checks are grouped by pane. Each line shows its utilisation and opens to the working and sources.</p>
+              <img src="/img/step-verify.webp" width="340" height="781" alt="The verification column listing deflection and stress checks for each pane." loading="lazy" />
+            </li>
+            <li>
+              <span class="step-n" aria-hidden="true">03</span>
+              <h3>Export the report</h3>
+              <p>Download a PDF and pass it to the engineer who signs the design off. The tool supports that review; it does not replace it.</p>
+              <img src="/img/step-report.webp" width="662" height="936" alt="A results page of an exported PDF report with deflection and stress tables." loading="lazy" />
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="results" class="band" aria-labelledby="results-title">
+        <div class="wrap">
+          <h2 id="results-title">Results</h2>
+          <p class="section-lead">Three of the templates as the checker draws them.</p>
+          <ul class="gallery">
+            <li>
+              <p class="label">Insulating unit with barrier · utilisation</p>
+              <img src="/img/render-igu.webp" width="706" height="606" alt="Double glazed unit with a laminated outer pane, shaded by stress utilisation." loading="lazy" />
+              <p class="caption">Pillowing under cavity pressure governs the outer pane at 98%.</p>
+            </li>
+            <li>
+              <p class="label">Balustrade · deflected shape</p>
+              <img src="/img/render-balustrade.webp" width="706" height="606" alt="Cantilever balustrade clamped at its base, deflected under the line load." loading="lazy" />
+              <p class="caption">IStructE worked example 7.8: 16.3 mm against the 25 mm limit.</p>
+            </li>
+            <li>
+              <p class="label">Glass wall · deflection</p>
+              <img src="/img/render-wall.webp" width="706" height="606" alt="Glass wall spanning floor to ceiling, shaded by deflection." loading="lazy" />
+              <p class="caption">IStructE worked example 8.2.7: 37.6 mm against 38.5 mm.</p>
+            </li>
+            <li>
+              <p class="label">Report · summary of results</p>
+              <img src="/img/render-report.webp" width="706" height="606" alt="The summary of results table from the PDF report." loading="lazy" />
+              <p class="caption">Every combination for every pane, with its utilisation.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="validation" aria-labelledby="validation-title">
+        <div class="wrap">
+          <h2 id="validation-title">How it is validated</h2>
+          <dl class="metrics">
+            <div><dt>Automated tests</dt><dd>81</dd></div>
+            <div><dt>Worked examples checked</dt><dd>6</dd></div>
+            <div><dt>Agreement with independent hand checks</dt><dd>1 in 10<sup>5</sup></dd></div>
+            <div><dt>Values without a source</dt><dd>0</dd></div>
+          </dl>
+          <div class="callout">
+            <h3>Checked against published worked examples</h3>
+            <p>
+              The plate solution reproduces the RWTH Aachen verification values for MEPLA (8.641 mm and 18.71 N/mm² for a
+              1000 × 2500 × 6 mm pane under 1 kN/m²). The IStructE balustrade and glass wall examples match once their
+              rounding is taken out, and the example IGU report's effective thicknesses (8.42 and 9.45 mm), load sharing and
+              cavity pressures (16.00 and −16.10 kPa) are reproduced. Expected results were computed by a separate script,
+              outside the engine, and each case notes where the printed figures differ and why.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="roadmap" class="band" aria-labelledby="roadmap-title">
+        <div class="wrap">
+          <h2 id="roadmap-title">Roadmap</h2>
+          <ul class="road">
+            <li class="road-card"><span class="tag tag-now">Available</span><h3>Panes and laminates</h3><p>Four-edge, two-edge and cantilever supports, up to four plies.</p></li>
+            <li class="road-card"><span class="tag tag-now">Available</span><h3>Double glazed units</h3><p>Load sharing and climatic loads by BS EN 16612 Annex C.</p></li>
+            <li class="road-card"><span class="tag tag-now">Available</span><h3>Barriers and human impact</h3><p>BS 6180 loads and checks, BS 6262-4 critical locations.</p></li>
+            <li class="road-card"><span class="tag tag-next">Planned</span><h3>Open questions settled</h3><p>Each value the standards leave open, resolved from a source.</p></li>
+            <li class="road-card"><span class="tag tag-next">Planned</span><h3>Triple glazing and point fixings</h3><p>Three-pane units and bolted glass, once methods are sourced.</p></li>
+            <li class="road-card"><span class="tag tag-later">Later</span><h3>Nonlinear plates and saved projects</h3><p>Geometric nonlinearity beyond Annex B, and projects you can share with a reviewer.</p></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="about" aria-labelledby="about-title">
+        <div class="wrap narrow">
+          <h2 id="about-title">About</h2>
+          <p>
+            Glass Designer is an independent tool for facade engineers, glaziers and fabricators. It applies its authors' reading
+            of BS EN 16612, the IStructE guide <cite>Structural use of glass in buildings</cite>, BS 6180 and BS 6262-4.
+          </p>
+          <p>
+            It is not produced, reviewed or endorsed by BSI, CEN or the IStructE. Every design it touches must still be checked and
+            approved by a qualified structural engineer. If something looks wrong, please say so: corrections shape what comes next.
+          </p>
+        </div>
+      </section>
+
+      <section id="contact" class="band" aria-labelledby="contact-title">
+        <div class="wrap contact">
+          <div>
+            <h2 id="contact-title">Get in touch</h2>
+            <p>Questions, corrections, or a glazing case you would like covered. We read every message and reply by email.</p>
+            <ul class="contact-points">
+              <li><strong>Bug or wrong result?</strong> Include the inputs, or attach the PDF report when you reply.</li>
+              <li><strong>Want a case covered?</strong> Tell us the build-up and how the glass is supported.</li>
+            </ul>
+            <p class="fine">See the <a href="/privacy.html">privacy notice</a> for how messages are handled.</p>
+          </div>
+          <form class="form" name="contact" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="company-website">
+            <input type="hidden" name="form-name" value="contact" />
+            <p class="hp" aria-hidden="true">
+              <label>Leave this empty <input name="company-website" tabindex="-1" autocomplete="off" /></label>
+            </p>
+            <div class="row">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" autocomplete="name" required />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" required />
+              </div>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label for="organisation">Organisation <span class="opt">(optional)</span></label>
+                <input id="organisation" name="organisation" autocomplete="organization" />
+              </div>
+              <div class="field">
+                <label for="subject">Subject</label>
+                <select id="subject" name="subject" required>
+                  <option value="question">A question</option>
+                  <option value="correction">A correction or bug</option>
+                  <option value="case">A glazing case to cover</option>
+                  <option value="other">Something else</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="6" maxlength="2000" required aria-describedby="message-count"></textarea>
+              <span class="count" id="message-count" aria-live="polite">0 / 2000</span>
+            </div>
+            <div class="field check">
+              <input id="consent" name="consent" type="checkbox" value="yes" required />
+              <label for="consent">I agree that my name, email and message may be stored to reply to me, as described in the <a href="/privacy.html">privacy notice</a>.</label>
+            </div>
+            <button class="btn btn-primary" type="submit">Send message</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="wrap">
+        <p class="foot-brand"><strong>Glass Designer</strong> · Structural glass checks, with the working on show.</p>
+        <p class="disclaimer">
+          <strong>Disclaimer.</strong> Glass Designer is a design aid. It applies its authors' reading of BS EN 16612, the
+          IStructE guide <cite>Structural use of glass in buildings</cite>, BS 6180 and BS 6262-4, and is not produced, reviewed
+          or endorsed by BSI, CEN, the IStructE or any glass manufacturer or software vendor named on this site. Results depend
+          on the inputs you enter, several of which the standards leave to the engineer. Every design must be checked and
+          approved by a qualified structural engineer before use. No liability is accepted for decisions based on its results.
+        </p>
+        <p class="foot-links">© <span id="year">2026</span> Glass Designer · <a href="/privacy.html">Privacy notice</a> · <a href="/#contact">Contact</a> · <a href="%VITE_APP_URL%">Open the checker</a></p>
+      </div>
+    </footer>
+  </body>
+</html>
