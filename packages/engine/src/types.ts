@@ -78,8 +78,13 @@ export interface BarrierLoads {
 }
 
 export interface Loads {
-  /** Characteristic wind pressure magnitude, kN/m². Checked as pressure and as suction. */
+  /**
+   * Characteristic wind pressure magnitude, kN/m². Checked as pressure, and as suction too unless
+   * `windSuction` is given.
+   */
   wind: number;
+  /** Characteristic wind suction magnitude, kN/m², when it differs from the pressure (e.g. from a wind calculation). */
+  windSuction?: number;
   /** Characteristic snow load on plan, kN/m² (sloped glazing only). */
   snow?: number;
   barrier?: BarrierLoads | null;

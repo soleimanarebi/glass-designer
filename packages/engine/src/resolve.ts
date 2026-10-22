@@ -31,7 +31,7 @@ import {
   type ShearCondition,
 } from "./data/glass";
 import { src, type Source } from "./data/sources";
-import type { ActionId, BuildUp, Climate, GlassInput, GlassSpec, Pane, PaneId, ValidationError } from "./types";
+import type { ActionId, BuildUp, Climate, GlassInput, GlassSpec, Loads, Pane, PaneId, ValidationError } from "./types";
 
 /** Where an action's load sits on the pane, before load sharing (calc-spec §1). */
 export type LoadGeom =
@@ -98,6 +98,9 @@ export interface Resolved {
 
 const finitePos = (v: unknown) => typeof v === "number" && Number.isFinite(v) && v > 0;
 const finiteNonNeg = (v: unknown) => typeof v === "number" && Number.isFinite(v) && v >= 0;
+
+/** Wind suction magnitude, kN/m²: `windSuction` when given, else the pressure value. */
+export const windSuction = (l: Loads) => l.windSuction ?? l.wind;
 
 export function panesOf(b: BuildUp): Pane[] {
   return b.kind === "single" ? [b.pane] : [b.outer, b.inner];
@@ -193,6 +196,9 @@ export function resolve(input: GlassInput): { errors: ValidationError[]; r?: Res
   }
   const L = input.loads;
   if (!finiteNonNeg(L.wind)) errors.push({ field: "loads.wind", message: "must be zero or a positive number (kN/m²)." });
+  if (L.windSuction !== undefined && !finiteNonNeg(L.windSuction)) {
+    errors.push({ field: "loads.windSuction", message: "must be zero or a positive number (kN/m²)." });
+  }
   if (L.snow !== undefined && !finiteNonNeg(L.snow)) errors.push({ field: "loads.snow", message: "must be zero or positive (kN/m²)." });
 
   const opts = input.options ?? {};
@@ -261,24 +267,26 @@ export function resolve(input: GlassInput): { errors: ValidationError[]; r?: Res
     });
   }
   const windShear: ShearCondition = opts.mediterranean ? "wind-med" : "wind";
-  if (L.wind > 0) {
-    for (const sign of [1, -1] as const) {
+  const suction = windSuction(L);
+  for (const sign of [1, -1] as const) {
+    const w = sign > 0 ? L.wind : suction;
+    if (w > 0) {
       actions.push({
         id: sign > 0 ? "W+" : "W-",
         label: sign > 0 ? "Wind pressure" : "Wind suction",
-        value: sign * L.wind,
+        value: sign * w,
         unit: "kN/m²",
         duration: "wind",
         ...k("wind", sign > 0 ? "W+" : "W-"),
         shear: windShear,
         where: "uniform on the outer pane",
         sources: [src("EN16612", "5.1, 7.2", "13, 15")],
-        loads: [{ pane: 1, geom: { kind: "uniform" }, mag: sign * L.wind * 1e-3 }],
+        loads: [{ pane: 1, geom: { kind: "uniform" }, mag: sign * w * 1e-3 }],
         concentrated: false,
       });
     }
   }
-  if (L.wind < MIN_UDL.value) {
+  if (Math.max(L.wind, suction) < MIN_UDL.value) {
     actions.push({
       id: "MIN",
       label: "Minimum uniform load",

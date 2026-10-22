@@ -1,8 +1,10 @@
 import { barriers, climate, glass, type GlassInput, type GlassSpec, type Pane } from "@glass/engine";
 import type { ReactNode } from "react";
 import { TEMPLATES } from "../templates";
+import type { WindLoad, WindSetup } from "../wind";
 import { Cite, Group, NumberField, SelectField } from "./fields";
 import { ARRANGEMENTS, arrangementOf, SupportThumb, TemplateThumb, type ArrangementChoice } from "./Thumbs";
+import { WindCalculator } from "./WindCalculator";
 
 type Update = (fn: (draft: GlassInput) => void) => void;
 
@@ -120,7 +122,15 @@ function PaneEditor({ title, pane, basis, set }: { title: string; pane: Pane; ba
   );
 }
 
-export function Inputs({ input, update, onTemplate, templateId }: { input: GlassInput; update: Update; onTemplate: (id: string) => void; templateId: string }) {
+export interface WindProps {
+  setup: WindSetup | null;
+  outcome: { ok: true; load: WindLoad } | { ok: false; errors: string[] } | null;
+  /** Turns the calculator on (with the example or last values) or off. */
+  toggle: (on: boolean) => void;
+  set: (fn: (draft: WindSetup) => void) => void;
+}
+
+export function Inputs({ input, update, onTemplate, templateId, wind }: { input: GlassInput; update: Update; onTemplate: (id: string) => void; templateId: string; wind: WindProps }) {
   const g = input.geometry;
   const b = input.loads.barrier;
   const row = b ? barriers.BS6180_TABLE2.find((r) => r.category === b.category) : undefined;
@@ -240,7 +250,30 @@ export function Inputs({ input, update, onTemplate, templateId }: { input: Glass
       </Group>
 
       <Group title="Wind and snow">
-        <NumberField label="Wind pressure, characteristic" unit="kN/m²" value={input.loads.wind} required onChange={(v) => update((d) => void (d.loads.wind = v))} hint="Net pressure on the glass; checked as pressure and as suction. From the project's wind report." />
+        <SelectField
+          label="Wind load"
+          value={wind.setup ? "calculate" : "enter"}
+          options={[
+            { value: "enter", label: "Enter from the wind report" },
+            { value: "calculate", label: "Calculate (BS EN 1991-1-4, UK NA)" },
+          ]}
+          onChange={(v) => wind.toggle(v === "calculate")}
+        />
+        {wind.setup && wind.outcome ? (
+          <WindCalculator setup={wind.setup} set={wind.set} outcome={wind.outcome} />
+        ) : (
+          <div className="row">
+            <NumberField label="Wind pressure, characteristic" unit="kN/m²" value={input.loads.wind} required onChange={(v) => update((d) => void (d.loads.wind = v))} hint="Net pressure on the glass, from the project's wind report." />
+            <OptionalNumber
+              label="Wind suction, characteristic"
+              unit="kN/m²"
+              value={input.loads.windSuction}
+              placeholder={Number.isFinite(input.loads.wind) ? String(input.loads.wind) : undefined}
+              onChange={(v) => update((d) => void (v === undefined ? delete d.loads.windSuction : (d.loads.windSuction = v)))}
+              hint="Magnitude of the net suction. Blank: same as the pressure."
+            />
+          </div>
+        )}
         {sloped ? (
           <>
             <NumberField label="Snow on plan, characteristic" unit="kN/m²" value={input.loads.snow ?? 0} onChange={(v) => update((d) => void (d.loads.snow = v))} />

@@ -31,13 +31,13 @@ exterior towards the interior):
 | Id | Action | Acts on | Source of the value |
 |---|---|---|---|
 | G | Self weight, normal component g·cos α (α = slope from horizontal; 0 for vertical glass) | each pane | ρ = 2500 kg/m³, EN 16612 6.2 p.15; slope component EN 16612 C.2 example p.40 |
-| W | Wind pressure +w and suction −w (uniform) | pane 1 (outer) | user (wind report) |
+| W | Wind pressure +w and suction −ws (uniform); ws = w unless entered separately | pane 1 (outer) | user (wind report) or the wind calculator (§11) |
 | S | Snow s·cos²α on sloped glazing (uniform) | pane 1 | user; slope component EN 16612 C.2 example p.40 |
 | BL | Barrier line load at the design level, outwards | pane on the occupied side | BS 6180 Table 2 p.9–10, 6.3.1 p.10 |
 | IL | Barrier infill uniform load below the design level, outwards | occupied side pane | BS 6180 Table 2, 6.3.1 |
 | PL | Barrier point load on a square patch, outwards | occupied side pane | BS 6180 Table 2, 6.3.1 |
 | CLs / CLw | Cavity pressure variations, summer and winter (IGU only) | both panes | EN 16612 C.1.4 p.37–38 |
-| MIN | Minimum 0.4 kN/m² short-duration uniform load, only when w < 0.4 | pane 1 | EN 16612 9.1.1 p.20 |
+| MIN | Minimum 0.4 kN/m² short-duration uniform load, only when both w and ws < 0.4 | pane 1 | EN 16612 9.1.1 p.20 |
 
 BL, IL and PL are not additive (BS 6180 6.3.1 p.10) and are separate leading actions.
 Wind and barrier loads are not combined (no ψ0 for wind is given in the documents, OQ-04).
@@ -53,7 +53,7 @@ Wind and barrier loads are not combined (no ψ0 for wind is given in the documen
 - `buildUp`: `{ kind: "single", pane }` or `{ kind: "igu", outer, inner, cavity }`, cavity in
   mm. A pane is `{ plies: Ply[], interlayer?: Interlayer }`; a ply is `{ thickness, glass }`
   with `glass = { type, profile, surface, process, edge }`.
-- `loads`: wind (kN/m²), snow (kN/m²), barrier `{ category, lineLoad?, udl?, point?,
+- `loads`: wind pressure (kN/m²), optional `windSuction` (kN/m², defaults to the pressure), snow (kN/m²), barrier `{ category, lineLoad?, udl?, point?,
   sillHeight, designLevel?, patch, pointPosition? }`; overrides default to BS 6180 Table 2.
 - `climate` (IGU only): summer and winter `{ dT (K), dp (kPa), dH (m) }`.
 - `factors`: optional overrides `gammaMA`, `gammaMv`, `gammaG`, `gammaQ`, `psi0Climate`,
@@ -291,7 +291,7 @@ Compliance items (pass/fail, no utilisation):
 | ISE | IStructE, Structural use of glass in buildings, 2nd edition, February 2014 |
 | BS6180 | BS 6180:2011 Barriers in and about buildings — Code of practice |
 | BS6262-4 | BS 6262-4:2018 Glazing for buildings — Part 4: Safety related to human impact |
-| REPORT | Glass & Façade Solutions, Brent Cross Plot 201 glass structural calculation report (example report) |
+| REPORT | Example glass structural calculation report (project details withheld) |
 | SHEET | Glass to PR EN 16612 / IStructE spreadsheet v4.0 |
 | MEPLA-DG | Mepla Software GmbH, "Double Glazing" help page |
 | MEPLA-VER | RWTH Aachen, verification of SJ MEPLA calculation methods |
@@ -303,3 +303,27 @@ For the 3D view the engine returns, per pane, the governing ULS and SLS combinat
 41 × 41 grid: stress (N/mm²), utilisation and deflection (mm). In Annex B mode the linear
 shape is scaled to the Annex B maximum and the caption says so, since nonlinear stresses move
 towards the corners (MEPLA-NL).
+
+## 11. Wind calculator (app)
+
+The app can calculate the wind load instead of taking it from a wind report. The calculation is
+the shared wind engine `packages/wind` (`@wind/engine`), copied unchanged from
+`soleimanarebi/wind-loader` so that Glass Designer, Wind Loader, Stone Designer and GRC Designer
+give the same numbers; its own calc spec there covers BS EN 1991-1-4:2005+A1:2010, the UK NA,
+PD 6688-1-4:2015 and CWCT Part 2. The glass engine itself takes only `loads.wind` and
+`loads.windSuction`.
+
+The user enters the site, the building and the wind inputs for each elevation, then places the
+pane: its elevation, corner zone (A) or general area, and the envelope type (default sealed /
+glazed, cpi +0.2 / −0.3, EN 7.2.9(6)). From the elevation summary of the wind engine:
+
+- `loads.wind` = maximum net pressure on the elevation (zone D, all wind directions);
+- `loads.windSuction` = most negative net suction: zone A and the other zones for a corner pane,
+  the zones other than A for a general pane;
+- with the CWCT Part 2 2.2.4 rule on (default), the design values (±0.8 kN/m² minimum, or the
+  proprietary bands) are used, otherwise the net values;
+- each value is rounded up to 0.01 kN/m².
+
+The PDF report then adds §3.1 (the peak velocity pressure table for the four directions, cpe,
+the net pressures on the pane's elevation and the values used) and Appendix B (the working for
+each direction with sources).

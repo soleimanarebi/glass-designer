@@ -270,7 +270,7 @@ write("05-annex-b-mepla-nonlinear.json", {
     "tolerance": {"relative": 1e-5},
 })
 
-# 06 Example report: Brent Cross IGU 1736 × 2691, outer 66.2 HS PVB, 16 mm cavity, inner 8 FT.
+# 06 Example report: IGU 1736 × 2691, outer 66.2 HS PVB, 16 mm cavity, inner 8 FT.
 a, b = 1736.0, 2691.0
 lam = a / b
 inv = 1 / lam - 1
@@ -283,8 +283,8 @@ astar = 28.9 * (16 * h1 ** 3 * h2 ** 3 / ((h1 ** 3 + h2 ** 3) * k5)) ** 0.25
 phi = 1 / (1 + (a / astar) ** 4)
 p0s = 0.34 * 20 - (-2) + 0.012 * 600
 p0w = 0.34 * -25 - 4 + 0.012 * -300
-write("06-brent-cross-igu.json", {
-    "name": "Insulating glass unit (example report, Brent Cross Plot 201)",
+write("06-example-report-igu.json", {
+    "name": "Insulating glass unit (example report)",
     "description": "1736 × 2691 mm IGU, outer 6 + 0.76 + 6 heat-strengthened with PVB, 16 mm cavity, inner 8 mm toughened; wind 1.79 kN/m², "
                    "BS 6180 category (xiii) barrier loads at normal duty, secondary element (γQ 1.3). Compares the report's derived values.",
     "reference": {

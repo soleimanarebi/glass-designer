@@ -5,6 +5,7 @@ import { Verification } from "./components/Verification";
 import { Viewer } from "./components/Viewer";
 import { DISCLAIMER } from "./disclaimer";
 import { cloneInput, TEMPLATES } from "./templates";
+import { WIND_EXAMPLE, windLoadFor, type WindSetup } from "./wind";
 
 export { DISCLAIMER };
 
@@ -32,9 +33,36 @@ export function App() {
     setTemplateId("edited");
   }, []);
 
+  // Wind calculator: when on, its pressure and suction drive loads.wind / loads.windSuction.
+  const [wind, setWindState] = useState<WindSetup | null>(null);
+  const [lastWind, setLastWind] = useState<WindSetup>(WIND_EXAMPLE);
+  const windOutcome = useMemo(() => (wind ? windLoadFor(wind) : null), [wind]);
+  const applyWind = (next: WindSetup | null) => {
+    setWindState(next);
+    if (!next) return;
+    setLastWind(next);
+    const o = windLoadFor(next);
+    update((d) => {
+      d.loads.wind = o.ok ? o.load.pressure : NaN;
+      d.loads.windSuction = o.ok ? o.load.suction : undefined;
+    });
+  };
+  const windProps = {
+    setup: wind,
+    outcome: windOutcome,
+    toggle: (on: boolean) => applyWind(on ? structuredClone(lastWind) : null),
+    set: (fn: (draft: WindSetup) => void) => {
+      if (!wind) return;
+      const next = structuredClone(wind);
+      fn(next);
+      applyWind(next);
+    },
+  };
+
   const loadTemplate = (id: string) => {
     const t = TEMPLATES.find((x) => x.id === id);
     if (!t) return;
+    setWindState(null);
     setInput(cloneInput(t.input));
     setTemplateId(id);
     setLoadCount((n) => n + 1);
@@ -48,6 +76,7 @@ export function App() {
       const { exportReport } = await import("./report");
       const canvas = document.querySelector<HTMLCanvasElement>(".canvas-wrap canvas");
       exportReport(input, result, {
+        wind: wind && windOutcome?.ok ? { setup: wind, load: windOutcome.load } : undefined,
         snapshot: canvas?.toDataURL("image/png"),
         snapshotAspect: canvas ? canvas.width / canvas.height : undefined,
         disclaimer: DISCLAIMER,
@@ -80,7 +109,7 @@ export function App() {
       <main className="layout">
         <aside className="col col-inputs">
           <h2>Inputs</h2>
-          <Inputs key={loadCount} input={input} update={update} onTemplate={loadTemplate} templateId={templateId} />
+          <Inputs key={loadCount} input={input} update={update} onTemplate={loadTemplate} templateId={templateId} wind={windProps} />
         </aside>
         <div className="col col-view">
           <Viewer input={input} valid={result.ok} />

@@ -1,5 +1,5 @@
 {
-  "name": "Insulating glass unit (example report, Brent Cross Plot 201)",
+  "name": "Insulating glass unit (example report)",
   "description": "1736 × 2691 mm IGU, outer 6 + 0.76 + 6 heat-strengthened with PVB, 16 mm cavity, inner 8 mm toughened; wind 1.79 kN/m², BS 6180 category (xiii) barrier loads at normal duty, secondary element (γQ 1.3). Compares the report's derived values.",
   "reference": {
     "source": "REPORT §2.5, §4.1–4.5 and Tables 9–12",
